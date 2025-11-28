@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-V1JLDSSSQ1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-V1JLDSSSQ1');
+    </script>
+
+    <!-- Google Tag Manager -->
+    <script>
+    (function(w,d,s,l,i){
+        w[l]=w[l]||[];
+        w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js'});
+        var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),
+            dl=l!='dataLayer'?'&l='+l:'';
+        j.async=true;
+        j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+        f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-T5Q26HFM');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>BestHEIC - Free Private HEIC and HEIF to JPG or PNG Converter</title>
+    <meta name="description" content="Convert HEIC and HEIF photos to JPG or PNG instantly in your browser. Free, private, and secure. No server uploads or signups.">
+    <meta name="keywords" content="heic to jpg, heic to png, heif converter, heif to jpg, free heic converter, private image converter, convert iphone photos">
+
+    <meta property="og:title" content="BestHEIC - Private HEIC and HEIF Converter">
+    <meta property="og:description" content="Convert iPhone HEIC and HEIF photos to JPG or PNG instantly in your browser. No uploads and no limits.">
+    <meta property="og:type" content="website">
+
+    <link rel="icon" type="image/png" href="favicon.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/heic2any/0.0.4/heic2any.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <style>
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .drag-active { border-color: #3b82f6; background-color: #eff6ff; transform: scale(1.01); }
+    </style>
+</head>
+<body class="min-h-screen bg-[#f5f6f7] text-slate-900 font-sans p-4 md:p-8">
+<noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T5Q26HFM"
+            height="0" width="0" style="display:none;visibility:hidden"></iframe>
+</noscript>
+
+<div class="max-w-5xl mx-auto">
+
+    <!-- Hero: top block -->
+    <header class="mb-8 pt-4 md:pt-6">
+        <div class="flex flex-col gap-6">
+
+            <!-- Logo aligned left -->
+            <div class="flex justify-start">
+                <img src="fulllogo.png"
+                     alt="BestHEIC logo"
+                     class="h-40 md:h-48 w-auto">
+            </div>
+
+            <!-- Hero text centered -->
+            <div class="max-w-2xl mx-auto text-center">
+                <!-- SEO H1, visually hidden -->
+                <h1 class="sr-only">
+                    BestHEIC - Free Private HEIC and HEIF to JPG or PNG Converter
+                </h1>
+
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-800 mb-3">
+                    Fast, private HEIC and HEIF to JPG or PNG converter in your browser.
+                </h2>
+
+                <p class="text-sm md:text-base text-slate-600">
+                    Drop iPhone photos, convert them on your device, then download clean JPG or PNG files with no uploads.
+                </p>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- Error Banner -->
+    <div id="error-banner" class="hidden mb-6 bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg flex items-center gap-3 max-w-2xl mx-auto">
+        <span id="error-text"></span>
+    </div>
+
+    <!-- Direct action: Drop Zone -->
+    <section aria-label="Upload and convert HEIC or HEIF files">
+        <div id="drop-zone"
+             class="relative border-2 border-dashed border-slate-300 bg-white rounded-xl p-12 text-center transition-all duration-200 mb-3 cursor-pointer shadow-sm hover:shadow-md max-w-3xl mx-auto">
+            <input type="file" id="file-input" multiple
+                   accept=".heic,.heif,image/heic,image/heif"
+                   class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+            <div class="flex flex-col items-center justify-center gap-4 pointer-events-none">
+                <div id="upload-icon-container" class="w-20 h-20 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center">
+                    <svg id="icon-upload" xmlns="http://www.w3.org/2000/svg" class="w-10 h-10"
+                         viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" x2="12" y1="3" y2="15"></line>
+                    </svg>
+                    <svg id="icon-spinner" class="w-10 h-10 animate-spin hidden"
+                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10"
+                                stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h3 id="drop-text" class="text-xl font-bold text-slate-700">
+                        Drop HEIC or HEIF photos here
+                    </h3>
+                    <p class="text-slate-500 mt-2">
+                        or click to browse, up to 20 files at a time
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <p class="text-xs text-center text-slate-500 mb-4">
+            Large photos from newer phones normally convert without trouble, but very big batches can depend on your device memory.
+        </p>
+    </section>
+
+    <!-- Reassurance and technical details -->
+    <section aria-label="BestHEIC benefits and privacy"
+             class="max-w-3xl mx-auto mb-8 text-center">
+        <!-- Reassurance block -->
+        <div class="flex flex-wrap items-center justify-center gap-3 text-xs md:text-sm font-medium text-slate-600">
+            <span class="flex items-center gap-1.5 px-3 py-1 bg-white border border-slate-200 rounded-full shadow-sm">
+                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                </svg>
+                No account or email
+            </span>
+            <span class="flex items-center gap-1.5 px-3 py-1 bg-white border border-slate-200 rounded-full shadow-sm">
+                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                </svg>
+                No uploads or tracking
+            </span>
+            <span class="flex items-center gap-1.5 px-3 py-1 bg-white border border-slate-200 rounded-full shadow-sm">
+                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                </svg>
+                Free, no watermarks
+            </span>
+        </div>
+
+        <!-- Technical details -->
+        <div class="mt-4 text-xs text-slate-500 flex flex-wrap justify-center gap-3 md:gap-4">
+            <span class="px-3 py-1 bg-slate-100 rounded-full">
+                Input: HEIC and HEIF from iPhone, iPad, and Mac
+            </span>
+            <span class="px-3 py-1 bg-slate-100 rounded-full">
+                Output: JPG or PNG for Windows, web, and older apps
+            </span>
+        </div>
+
+        <div class="mt-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-medium">
+            <span class="inline-flex items-center justify-center w-4 h-4 rounded-full bg-emerald-600 text-white text-[10px]">
+                ✓
+            </span>
+            Files stay in your browser, nothing is sent to any server.
+        </div>
+    </section>
+
+    <!-- Actions Bar -->
+    <section aria-label="Conversion settings">
+        <div id="actions-bar"
+             class="hidden flex-col sm:flex-row items-center justify-between gap-4 mb-6 bg-white p-4 rounded-lg shadow-sm border border-slate-100 max-w-3xl mx-auto">
+            <div class="flex items-center gap-2">
+                <span id="file-count" class="font-medium text-slate-700">0 file(s) selected</span>
+                <span id="progress-badge" class="hidden text-sm text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
+                    0%
+                </span>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-3 justify-center sm:justify-end w-full sm:w-auto">
+                <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5">
+                    <label for="format-select"
+                           class="text-xs font-bold text-slate-500 uppercase tracking-wide">
+                        Convert to
+                    </label>
+                    <select id="format-select"
+                            class="bg-transparent text-sm font-semibold text-slate-700 focus:outline-none cursor-pointer">
+                        <option value="image/jpeg">JPG</option>
+                        <option value="image/png">PNG</option>
+                    </select>
+                </div>
+
+                <button id="btn-convert"
+                        class="hidden flex items-center gap-2 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors shadow-sm active:scale-95">
+                    Convert all
+                </button>
+
+                <button id="btn-download-all"
+                        class="hidden flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors shadow-sm active:scale-95">
+                    Download all as ZIP
+                </button>
+
+                <button id="btn-clear"
+                        class="flex items-center gap-2 px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+                    Clear
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- File Grid -->
+    <section aria-label="Converted files">
+        <div id="file-grid"
+             class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
+        </div>
+    </section>
+
+    <!-- How it works (explanation section, visually separated) -->
+    <section id="how-it-works"
+             class="max-w-3xl mx-auto mt-16 border-t border-slate-200 pt-10">
+        <h2 class="text-2xl font-bold text-slate-800 mb-4 text-center">
+            How BestHEIC works
+        </h2>
+        <p class="text-sm text-slate-600 mb-3">
+            BestHEIC converts HEIC and HEIF photos directly in your browser. When you drop files on the page, the converter runs on your device and uses a library that turns each photo into a standard JPG or PNG. Nothing is uploaded to a remote server.
+        </p>
+        <p class="text-sm text-slate-600 mb-3">
+            First, choose or drop up to 20 HEIC or HEIF files. Second, pick your preferred output format, either JPG or PNG. Third, click Convert all and wait for each card to show a preview. You can download images one by one or grab everything as a ZIP file when the conversion finishes.
+        </p>
+        <p class="text-sm text-slate-600">
+            This approach is usually faster than cloud tools because it uses the power of your computer or phone, and it gives you extra privacy since your photos never leave your browser session.
+        </p>
+    </section>
+
+    <!-- Why use BestHEIC -->
+    <section class="max-w-3xl mx-auto mt-16">
+        <h2 class="text-2xl font-bold text-slate-800 mb-6 text-center">
+            Why use BestHEIC for HEIC and HEIF conversion
+        </h2>
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="text-center">
+                <div class="w-12 h-12 bg-green-100 text-green-600 rounded-full mx-auto mb-4 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6"
+                         fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                         stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                </div>
+                <h3 class="font-bold text-slate-800 mb-2">Private by design</h3>
+                <p class="text-sm text-slate-500">
+                    Files are processed locally in your browser. There are no uploads, no storage, and no access to your photos on any server.
+                </p>
+            </div>
+            <div class="text-center">
+                <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full mx-auto mb-4 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6"
+                         fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                         stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </div>
+                <h3 class="font-bold text-slate-800 mb-2">Fast and simple</h3>
+                <p class="text-sm text-slate-500">
+                    Drag, drop, convert, and download in a few clicks. Most conversions finish quickly for normal photo sizes.
+                </p>
+            </div>
+            <div class="text-center">
+                <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-full mx-auto mb-4 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6"
+                         fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                         stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="font-bold text-slate-800 mb-2">Free with no catches</h3>
+                <p class="text-sm text-slate-500">
+                    There are no daily limits, paywalls, or watermarks. You can convert as often as you need within the browser limits of your device.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- HEIC and HEIF explainer -->
+    <section id="about" class="max-w-3xl mx-auto mt-16">
+        <h2 class="text-2xl font-bold text-slate-800 mb-4">
+            What are HEIC and HEIF
+        </h2>
+        <p class="text-sm text-slate-600 mb-3">
+            HEIF stands for High Efficiency Image Format. HEIC is a common file extension that Apple uses for photos saved in the HEIF format. Modern iPhones, iPads, and many Macs use HEIC and HEIF because these formats store high quality images in smaller file sizes compared to old formats like JPG.
+        </p>
+        <p class="text-sm text-slate-600 mb-3">
+            The smaller size is helpful for your photo library, but many apps and older systems do not recognize HEIC or HEIF by default. Windows systems, older versions of macOS, older design tools, and some web upload forms still expect JPG or PNG files.
+        </p>
+        <p class="text-sm text-slate-600">
+            A converter like BestHEIC keeps the original quality as much as practical while giving you a familiar file type. That way you can email photos, upload them to websites, and use them in tools that do not support HEIC or HEIF on their own.
+        </p>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="max-w-3xl mx-auto mt-16 mb-20">
+        <h2 class="text-2xl font-bold text-slate-800 mb-4">
+            Frequently asked questions
+        </h2>
+
+        <div class="space-y-4">
+            <div class="bg-white border border-slate-200 rounded-lg p-4">
+                <h3 class="font-semibold text-slate-800 mb-1 text-sm">
+                    Are my photos uploaded or stored anywhere
+                </h3>
+                <p class="text-sm text-slate-600">
+                    No. All conversion happens in your browser using JavaScript. The photos stay on your device and are not sent to any server. When you close the tab, the conversion state is gone.
+                </p>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-lg p-4">
+                <h3 class="font-semibold text-slate-800 mb-1 text-sm">
+                    What is the difference between HEIC and HEIF
+                </h3>
+                <p class="text-sm text-slate-600">
+                    HEIF is the image format. HEIC is a common file extension that Apple uses for HEIF image files. In practice most people treat the two as the same thing, so this tool accepts both without any extra steps from you.
+                </p>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-lg p-4">
+                <h3 class="font-semibold text-slate-800 mb-1 text-sm">
+                    Why do my iPhone photos show up as HEIC
+                </h3>
+                <p class="text-sm text-slate-600">
+                    Apple uses HEIC by default because it saves storage space. You get similar or better quality compared to JPG at a smaller file size. The tradeoff is that some older devices and apps cannot open HEIC files without extra software or a converter.
+                </p>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-lg p-4">
+                <h3 class="font-semibold text-slate-800 mb-1 text-sm">
+                    How many photos can I convert at once
+                </h3>
+                <p class="text-sm text-slate-600">
+                    Right now BestHEIC lets you load up to 20 files per batch. This keeps the page responsive and reduces the chance of running out of memory in your browser, especially on phones or older laptops.
+                </p>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-lg p-4">
+                <h3 class="font-semibold text-slate-800 mb-1 text-sm">
+                    Which format should I choose, JPG or PNG
+                </h3>
+                <p class="text-sm text-slate-600">
+                    JPG is usually best for everyday photos and sharing by email or text because the files are smaller. PNG is useful when you want lossless quality or plan to edit images further in design tools. You can pick either format from the Convert to dropdown before you start.
+                </p>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-lg p-4">
+                <h3 class="font-semibold text-slate-800 mb-1 text-sm">
+                    Will this work on Windows and older apps
+                </h3>
+                <p class="text-sm text-slate-600">
+                    Yes. Once your HEIC or HEIF files are converted to JPG or PNG, they work on Windows, on older versions of macOS, in most email clients, in web forms, and in common editing tools that do not understand HEIC yet.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact anchor for footer link -->
+    <section id="contact" class="max-w-3xl mx-auto mb-10">
+        <h2 class="sr-only">Contact</h2>
+        <p class="text-xs text-slate-500 text-center">
+            For questions about privacy or use of this tool, use the contact information provided on the Legal and Privacy page.
+        </p>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-200 py-8 text-center text-slate-400 text-sm">
+        <p class="mb-2">
+            &copy; 2024 BestHEIC. All rights reserved.
+        </p>
+        <p class="space-x-4">
+            <a href="#about" class="hover:text-slate-600 transition-colors">About</a>
+            <a href="#faq" class="hover:text-slate-600 transition-colors">FAQ</a>
+            <a href="#contact" class="hover:text-slate-600 transition-colors">Contact</a>
+            <a href="legal.html" class="hover:text-slate-600 transition-colors">Legal and Privacy</a>
+        </p>
+    </footer>
+
+</div>
+
+<!-- FAQ structured data for SEO -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Are my photos uploaded or stored anywhere?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. All conversion happens in your browser using JavaScript, so your photos stay on your device and are not sent to any server."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between HEIC and HEIF?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "HEIF is the image format and HEIC is a common file extension that Apple uses for HEIF image files. This tool accepts both without extra steps."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why do my iPhone photos show up as HEIC?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Apple uses HEIC by default because it gives similar or better quality than JPG at a smaller file size, although some older devices and apps do not support it."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How many photos can I convert at once?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You can load up to 20 files in a single batch to keep the page responsive and reduce the chance of running out of memory in your browser."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Which format should I choose, JPG or PNG?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "JPG is usually best for everyday photos and sharing because the files are smaller. PNG is helpful when you want lossless quality or plan to edit the images further."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Will this work on Windows and older apps?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. After you convert HEIC or HEIF files to JPG or PNG, they work on Windows, older macOS versions, common email clients, web forms, and most editing tools."
+      }
+    }
+  ]
+}
+</script>
+
+<script>
+    // --- Application Logic ---
+    let files = [];
+    let isProcessing = false;
+
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const fileGrid = document.getElementById('file-grid');
+    const actionsBar = document.getElementById('actions-bar');
+    const errorBanner = document.getElementById('error-banner');
+    const errorText = document.getElementById('error-text');
+
+    const btnConvert = document.getElementById('btn-convert');
+    const btnDownloadAll = document.getElementById('btn-download-all');
+    const btnClear = document.getElementById('btn-clear');
+    const formatSelect = document.getElementById('format-select');
+
+    const fileCountLabel = document.getElementById('file-count');
+    const progressBadge = document.getElementById('progress-badge');
+    const uploadIcon = document.getElementById('icon-upload');
+    const spinnerIcon = document.getElementById('icon-spinner');
+    const dropText = document.getElementById('drop-text');
+
+    // Drag and drop
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        if (!isProcessing) dropZone.classList.add('drag-active');
+    });
+    dropZone.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('drag-active');
+    });
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('drag-active');
+        if (!isProcessing) handleFiles(e.dataTransfer.files);
+    });
+    fileInput.addEventListener('change', (e) => {
+        handleFiles(e.target.files);
+        fileInput.value = '';
+    });
+
+    btnConvert.addEventListener('click', convertFiles);
+    btnDownloadAll.addEventListener('click', downloadAllZip);
+    btnClear.addEventListener('click', clearAll);
+
+    function handleFiles(newFilesList) {
+        hideError();
+        const newFiles = Array.from(newFilesList).filter(f => {
+            const name = f.name.toLowerCase();
+            const type = f.type.toLowerCase();
+            return name.endsWith('.heic') ||
+                   name.endsWith('.heif') ||
+                   type === 'image/heic' ||
+                   type === 'image/heif';
+        });
+
+        if (newFiles.length === 0 && newFilesList.length > 0) {
+            const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent || '');
+            if (isIOS) {
+                showError(
+                    'These files are not HEIC or HEIF. On iPhone, Photos often converts HEIC to JPEG when you share. To upload a real HEIC, open the photo in Photos, tap Share, choose "Save to Files", then upload that saved file here.'
+                );
+            } else {
+                showError('These files are not HEIC or HEIF. Please select .heic or .heif files.');
+            }
+            return;
+        }
+
+        if (files.length + newFiles.length > 20) {
+            showError('Limit of 20 files at a time.');
+            return;
+        }
+
+        const batchStartNum = Math.floor(Math.random() * 80000) + 10000;
+        const newFileObjects = newFiles.map((f, index) => ({
+            id: Math.random().toString(36).substr(2, 9),
+            file: f,
+            originalName: f.name,
+            newName: 'img_' + (batchStartNum + index) + '.jpg',
+            status: 'pending',
+            blob: null,
+            previewUrl: null
+        }));
+
+        files = files.concat(newFileObjects);
+        renderUI();
+    }
+
+    async function convertFiles() {
+        if (isProcessing || files.length === 0) return;
+        setIsProcessing(true);
+        hideError();
+
+        const targetFormat = formatSelect.value;
+        const targetExt = targetFormat === 'image/png' ? 'png' : 'jpg';
+
+        for (let i = 0; i < files.length; i++) {
+            if (files[i].status === 'success') continue;
+
+            files[i].status = 'converting';
+
+            const nameParts = files[i].newName.split('.');
+            nameParts.pop();
+            files[i].newName = nameParts.join('.') + '.' + targetExt;
+
+            renderUI();
+
+            try {
+                const resultBlob = await heic2any({
+                    blob: files[i].file,
+                    toType: targetFormat,
+                    quality: 0.8
+                });
+                const finalBlob = Array.isArray(resultBlob) ? resultBlob[0] : resultBlob;
+
+                files[i].status = 'success';
+                files[i].blob = finalBlob;
+                files[i].previewUrl = URL.createObjectURL(finalBlob);
+            } catch (err) {
+                if (err && (err.code === 1 || (err.message && err.message.toLowerCase().includes('already browser readable')))) {
+                    files[i].status = 'success';
+                    files[i].blob = files[i].file;
+                    files[i].previewUrl = URL.createObjectURL(files[i].file);
+                } else {
+                    files[i].status = 'error';
+                }
+            }
+        }
+
+        setIsProcessing(false);
+        renderUI();
+    }
+
+    function removeFile(id) {
+        if (isProcessing) return;
+        const file = files.find(f => f.id === id);
+        if (file && file.previewUrl) URL.revokeObjectURL(file.previewUrl);
+        files = files.filter(f => f.id !== id);
+        renderUI();
+    }
+
+    function downloadSingle(id) {
+        const file = files.find(f => f.id === id);
+        if (file && file.previewUrl) {
+            const a = document.createElement('a');
+            a.href = file.previewUrl;
+            a.download = file.newName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    }
+
+    async function downloadAllZip() {
+        if (typeof JSZip === 'undefined') return;
+        const zip = new JSZip();
+        const successFiles = files.filter(f => f.status === 'success' && f.blob);
+        if (successFiles.length === 0) return;
+
+        successFiles.forEach(f => zip.file(f.newName, f.blob));
+
+        const content = await zip.generateAsync({ type: 'blob' });
+        const url = URL.createObjectURL(content);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'converted_images.zip';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    function clearAll() {
+        if (isProcessing) return;
+        files.forEach(f => {
+            if (f.previewUrl) URL.revokeObjectURL(f.previewUrl);
+        });
+        files = [];
+        hideError();
+        renderUI();
+    }
+
+    function setIsProcessing(val) {
+        isProcessing = val;
+        if (val) {
+            dropZone.classList.add('opacity-50', 'pointer-events-none');
+            uploadIcon.classList.add('hidden');
+            spinnerIcon.classList.remove('hidden');
+            dropText.textContent = 'Processing your photos...';
+            btnConvert.classList.add('opacity-50', 'cursor-not-allowed');
+            formatSelect.disabled = true;
+        } else {
+            dropZone.classList.remove('opacity-50', 'pointer-events-none');
+            uploadIcon.classList.remove('hidden');
+            spinnerIcon.classList.add('hidden');
+            dropText.textContent = 'Drop HEIC or HEIF photos here';
+            btnConvert.classList.remove('opacity-50', 'cursor-not-allowed');
+            formatSelect.disabled = false;
+        }
+    }
+
+    function showError(msg) {
+        errorText.textContent = msg;
+        errorBanner.classList.remove('hidden');
+    }
+
+    function hideError() {
+        errorBanner.classList.add('hidden');
+    }
+
+    function renderUI() {
+        if (files.length > 0) {
+            actionsBar.classList.remove('hidden');
+            actionsBar.classList.add('flex');
+        } else {
+            actionsBar.classList.add('hidden');
+            actionsBar.classList.remove('flex');
+        }
+
+        fileCountLabel.textContent = files.length + ' file(s) selected';
+        const successCount = files.filter(f => f.status === 'success').length;
+
+        if (files.filter(f => f.status === 'pending' || f.status === 'error').length > 0 && !isProcessing) {
+            btnConvert.classList.remove('hidden');
+        } else {
+            btnConvert.classList.add('hidden');
+        }
+
+        if (successCount > 0) {
+            btnDownloadAll.classList.remove('hidden');
+        } else {
+            btnDownloadAll.classList.add('hidden');
+        }
+
+        if (files.length > 0 && (isProcessing || successCount > 0)) {
+            progressBadge.textContent = Math.round((successCount / files.length) * 100) + '%';
+            progressBadge.classList.remove('hidden');
+        } else {
+            progressBadge.classList.add('hidden');
+        }
+
+        fileGrid.innerHTML = '';
+        files.forEach(f => {
+            const card = document.createElement('div');
+            card.className = 'bg-white p-3 rounded-xl shadow-sm border border-slate-200 flex flex-col gap-3';
+
+            let overlay = '';
+            if (f.status === 'converting') {
+                overlay =
+                  '<div class="absolute inset-0 flex items-center justify-center bg-black/5 p-4">' +
+                    '<div class="bg-white/90 px-4 py-2 rounded-full shadow-lg text-xs font-bold text-slate-700">Converting...</div>' +
+                  '</div>';
+            } else if (f.status === 'error') {
+                overlay =
+                  '<div class="absolute inset-0 flex items-center justify-center bg-black/5 p-4">' +
+                    '<div class="bg-red-100 text-red-600 px-3 py-1 rounded-md text-xs font-medium">Failed</div>' +
+                  '</div>';
+            }
+
+            let preview = '';
+            if (f.status === 'success' && f.previewUrl) {
+                preview = '<img src="' + f.previewUrl + '" class="w-full h-full object-cover">';
+            } else {
+                preview = '<div class="w-full h-full bg-slate-100 flex items-center justify-center text-slate-300">HEIC</div>';
+            }
+
+            let btn = '';
+            if (f.status === 'success') {
+                btn = '<button onclick="downloadSingle(\'' + f.id + '\')" class="text-green-600 text-xs font-semibold">Download</button>';
+            } else {
+                btn = '<button onclick="removeFile(\'' + f.id + '\')" class="text-red-400 text-xs font-semibold">Remove</button>';
+            }
+
+            card.innerHTML =
+                '<div class="relative aspect-video bg-slate-100 rounded-lg overflow-hidden flex items-center justify-center">' +
+                    preview +
+                    overlay +
+                '</div>' +
+                '<div class="flex items-start justify-between gap-2">' +
+                    '<div class="min-w-0">' +
+                        '<p class="text-sm font-medium text-slate-700 truncate" title="' + f.originalName + '">' + f.originalName + '</p>' +
+                        '<p class="text-xs text-slate-400">' + (f.file.size / 1024 / 1024).toFixed(2) + ' MB</p>' +
+                    '</div>' +
+                    btn +
+                '</div>';
+
+            fileGrid.appendChild(card);
+        });
+    }
+</script>
+</body>
+</html>

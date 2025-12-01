@@ -28,6 +28,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>BestHEIC - Free Private HEIC and HEIF to JPG or PNG Converter</title>
+    <link rel="stylesheet" href="styles.css">
     <meta name="description" content="Convert HEIC and HEIF photos to JPG or PNG instantly in your browser. Free, private, and secure. No server uploads or signups.">
     <meta name="keywords" content="heic to jpg, heic to png, heif converter, heif to jpg, free heic converter, private image converter, convert iphone photos">
 
@@ -36,9 +37,8 @@
     <meta property="og:type" content="website">
 
     <link rel="icon" type="image/png" href="favicon.png">
-
-    <!-- Tailwind CDN (kept in head so the page is styled on first paint) -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/heic2any/0.0.4/heic2any.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
     <style>
         ::-webkit-scrollbar { width: 8px; }
@@ -64,9 +64,7 @@
             <div class="flex justify-start">
                 <img src="fulllogo.png"
                      alt="BestHEIC logo"
-                     width="260"
-                     height="80"
-                     class="h-auto w-auto">
+                     class="h-30 md:h-40 w-auto">
             </div>
 
             <!-- Hero text centered -->
@@ -452,10 +450,6 @@
   ]
 }
 </script>
-
-<!-- Libraries moved out of the head so they do not block initial render -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/heic2any/0.0.4/heic2any.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
 <script>
     // --- Application Logic ---

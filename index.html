@@ -534,7 +534,8 @@
             newName: 'img_' + (batchStartNum + index) + '.jpg',
             status: 'pending',
             blob: null,
-            previewUrl: null
+            previewUrl: null,
+            errorMessage: null
         }));
 
         files = files.concat(newFileObjects);
@@ -553,6 +554,7 @@
             if (files[i].status === 'success') continue;
 
             files[i].status = 'converting';
+            files[i].errorMessage = null;
 
             const nameParts = files[i].newName.split('.');
             nameParts.pop();
@@ -572,12 +574,17 @@
                 files[i].blob = finalBlob;
                 files[i].previewUrl = URL.createObjectURL(finalBlob);
             } catch (err) {
+                // Diagnostic logging so you can see real errors in dev tools
+                console.error('BestHEIC conversion error for', files[i].originalName, err);
+
                 if (err && (err.code === 1 || (err.message && err.message.toLowerCase().includes('already browser readable')))) {
+                    // File is already browser readable
                     files[i].status = 'success';
                     files[i].blob = files[i].file;
                     files[i].previewUrl = URL.createObjectURL(files[i].file);
                 } else {
                     files[i].status = 'error';
+                    files[i].errorMessage = err && err.message ? err.message : 'Unknown conversion error';
                 }
             }
         }
@@ -726,6 +733,15 @@
                 btn = '<button onclick="removeFile(\'' + f.id + '\')" class="text-red-400 text-xs font-semibold">Remove</button>';
             }
 
+            let extraInfo = '';
+            if (f.status === 'error' && f.errorMessage) {
+                const safeMessage = f.errorMessage.replace(/"/g, '&quot;');
+                extraInfo =
+                    '<p class="text-[11px] text-red-500 mt-0.5 truncate" title="' + safeMessage + '">Error: ' +
+                    safeMessage +
+                    '</p>';
+            }
+
             card.innerHTML =
                 '<div class="relative aspect-video bg-slate-100 rounded-lg overflow-hidden flex items-center justify-center">' +
                     preview +
@@ -735,6 +751,7 @@
                     '<div class="min-w-0">' +
                         '<p class="text-sm font-medium text-slate-700 truncate" title="' + f.originalName + '">' + f.originalName + '</p>' +
                         '<p class="text-xs text-slate-400">' + (f.file.size / 1024 / 1024).toFixed(2) + ' MB</p>' +
+                        extraInfo +
                     '</div>' +
                     btn +
                 '</div>';

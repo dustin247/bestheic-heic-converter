@@ -37,9 +37,8 @@
 
     <link rel="icon" type="image/png" href="favicon.png">
 
+    <!-- Tailwind CDN (kept in head so the page is styled on first paint) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/heic2any/0.0.4/heic2any.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
     <style>
         ::-webkit-scrollbar { width: 8px; }
@@ -65,7 +64,9 @@
             <div class="flex justify-start">
                 <img src="fulllogo.png"
                      alt="BestHEIC logo"
-                     class="h-30 md:h-40 w-auto">
+                     width="260"
+                     height="80"
+                     class="h-auto w-auto">
             </div>
 
             <!-- Hero text centered -->
@@ -451,6 +452,10 @@
   ]
 }
 </script>
+
+<!-- Libraries moved out of the head so they do not block initial render -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/heic2any/0.0.4/heic2any.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
 <script>
     // --- Application Logic ---

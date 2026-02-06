@@ -375,14 +375,12 @@
     <!-- Contact anchor for footer link -->
     <section id="contact" class="max-w-3xl mx-auto mb-10">
         <h2 class="sr-only">Contact</h2>
-<p class="text-xs text-slate-500 text-center">
-  For questions about privacy or use of this tool, email
-  <a href="mailto:dust247@yahoo.com" class="underline hover:text-slate-700">
-    dust247@yahoo.com
-  </a>.
-</p>
-
-
+        <p class="text-xs text-slate-500 text-center">
+            For questions about privacy or use of this tool, email
+            <a href="mailto:dust247@yahoo.com" class="underline hover:text-slate-700">
+                dust247@yahoo.com
+            </a>.
+        </p>
     </section>
 
     <!-- Footer -->
@@ -393,7 +391,7 @@
         <p class="space-x-4">
             <a href="#about" class="hover:text-slate-600 transition-colors">About</a>
             <a href="#faq" class="hover:text-slate-600 transition-colors">FAQ</a>
-            <a href="#contact" class="hover:text-slate-600 transition-colors">Contact</a>
+            <a href="mailto:dust247@yahoo.com" class="hover:text-slate-600 transition-colors">Contact</a>
             <a href="legal.html" class="hover:text-slate-600 transition-colors">Legal and Privacy</a>
         </p>
     </footer>
@@ -584,11 +582,9 @@
                 files[i].blob = finalBlob;
                 files[i].previewUrl = URL.createObjectURL(finalBlob);
             } catch (err) {
-                // Diagnostic logging so you can see real errors in dev tools
                 console.error('BestHEIC conversion error for', files[i].originalName, err);
 
                 if (err && (err.code === 1 || (err.message && err.message.toLowerCase().includes('already browser readable')))) {
-                    // File is already browser readable
                     files[i].status = 'success';
                     files[i].blob = files[i].file;
                     files[i].previewUrl = URL.createObjectURL(files[i].file);
